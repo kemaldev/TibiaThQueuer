@@ -9,6 +9,7 @@ namespace Services.Interfaces
 {
     public interface ICharacterListRepository
     {
+        CharacterListResponse GetCharacterList(int characterListId);
         Task<ResponseBase> AddTibiaCharacterToListAsync(TibiaCharacter tibiaCharacter, Account account, int characterListId);
         Task<ResponseBase> RemoveTibiaCharacterFromListAsync(TibiaCharacter tibiaCharacter, int characterListId);
     }

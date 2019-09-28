@@ -18,6 +18,26 @@ namespace Services.Repositories
             _context = context;
         }
 
+        public CharacterListResponse GetCharacterList(int characterListId)
+        {
+            var characterList = _context.CharacterList.Find(characterListId);
+
+            if(characterList == null)
+            {
+                return new CharacterListResponse
+                {
+                    Success = false,
+                    ErrorMessage = "Character list with provided id did not exist."
+                };
+            }
+
+            return new CharacterListResponse
+            {
+                Success = true,
+                CharacterList = characterList
+            };
+        }
+
         public async Task<ResponseBase> AddTibiaCharacterToListAsync(TibiaCharacter tibiaCharacter, Account account, int characterListId)
         {
             if(tibiaCharacter == null || account == null)

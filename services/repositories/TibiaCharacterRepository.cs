@@ -19,7 +19,7 @@ namespace Services.Repositories
             _context = context;
         }
 
-        public async Task<ResponseBase> AddTibiaCharacter(TibiaCharacter tibiaCharacter)
+        public async Task<ResponseBase> AddTibiaCharacterAsync(TibiaCharacter tibiaCharacter)
         {
             _context.TibiaCharacter.Add(tibiaCharacter);
             
@@ -64,7 +64,7 @@ namespace Services.Repositories
             };
         }
 
-        public async Task<ResponseBase> DeleteTibiaCharacter(int tibiaCharacterId)
+        public async Task<ResponseBase> DeleteTibiaCharacterAsync(int tibiaCharacterId)
         {
             var tibiaCharacter = _context.TibiaCharacter.Find(tibiaCharacterId);
 
@@ -100,7 +100,7 @@ namespace Services.Repositories
             };
         }
 
-        public async Task<ResponseBase> UpdateTibiaCharacter(int tibiaCharacterId, TibiaCharacter tibiaCharacter)
+        public async Task<ResponseBase> UpdateTibiaCharacterAsync(int tibiaCharacterId, TibiaCharacter tibiaCharacter)
         {
             if(tibiaCharacter == null)
             {

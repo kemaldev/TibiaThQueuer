@@ -9,10 +9,10 @@ namespace Services.Interfaces
 {
     public interface ITibiaCharacterRepository
     {
-        Task<ResponseBase> AddTibiaCharacter(TibiaCharacter tibiaCharacter);
+        Task<ResponseBase> AddTibiaCharacterAsync(TibiaCharacter tibiaCharacter);
 
         TibiaCharacterResponse GetTibiaCharacter(int tibiaCharacterId);
-        Task<ResponseBase> UpdateTibiaCharacter(int tibiaCharacterId, TibiaCharacter tibiaCharacter);
-        Task<ResponseBase> DeleteTibiaCharacter(int tibiaCharacterId);
+        Task<ResponseBase> UpdateTibiaCharacterAsync(int tibiaCharacterId, TibiaCharacter tibiaCharacter);
+        Task<ResponseBase> DeleteTibiaCharacterAsync(int tibiaCharacterId);
     }
 }
