@@ -122,7 +122,7 @@ namespace Services.Repositories
                 };
             }
 
-            existingTibiaCharacter = tibiaCharacter;
+            MapUpdateRequest(existingCharacter: existingTibiaCharacter, requestCharacter: tibiaCharacter);
             _context.TibiaCharacter.Update(existingTibiaCharacter);
 
             try
@@ -144,6 +144,29 @@ namespace Services.Repositories
             {
                 Success = true
             };
+        }
+
+        private void MapUpdateRequest(TibiaCharacter existingCharacter, TibiaCharacter requestCharacter)
+        {
+            if (!string.IsNullOrWhiteSpace(requestCharacter.Name))
+            {
+                existingCharacter.Name = requestCharacter.Name;
+            }
+
+            if (requestCharacter.Level != 0)
+            {
+                existingCharacter.Level = requestCharacter.Level;
+            }
+
+            if (!string.IsNullOrWhiteSpace(requestCharacter.PVPType))
+            {
+                existingCharacter.PVPType = requestCharacter.PVPType;
+            }
+
+            if (!string.IsNullOrWhiteSpace(requestCharacter.World))
+            {
+                existingCharacter.World = requestCharacter.World;
+            }
         }
     }
 }

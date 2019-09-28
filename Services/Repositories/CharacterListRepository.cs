@@ -1,5 +1,6 @@
 ﻿using Data;
 using Models;
+using Models.Requests;
 using Models.Responses;
 using Services.Interfaces;
 using System;
@@ -38,9 +39,9 @@ namespace Services.Repositories
             };
         }
 
-        public async Task<ResponseBase> AddTibiaCharacterToListAsync(TibiaCharacter tibiaCharacter, Account account, int characterListId)
+        public async Task<ResponseBase> AddTibiaCharacterToListAsync(AddTibiaCharacterToListRequest request, int characterListId)
         {
-            if(tibiaCharacter == null || account == null)
+            if(request.TibiaCharacter == null || request.Account == null)
             {
                 return new ResponseBase
                 {
@@ -60,8 +61,8 @@ namespace Services.Repositories
                 };
             }
 
-            characterList.TibiaCharacters.Add(tibiaCharacter);
-            characterList.Account = account;
+            characterList.TibiaCharacters.Add(request.TibiaCharacter);
+            characterList.Account = request.Account;
 
             try
             {
