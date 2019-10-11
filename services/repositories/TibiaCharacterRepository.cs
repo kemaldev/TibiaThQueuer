@@ -1,5 +1,6 @@
 ﻿using Data;
 using Models;
+using Models.DTOs;
 using Models.Responses;
 using Services.Interfaces;
 using System;
@@ -46,7 +47,18 @@ namespace Services.Repositories
 
         public TibiaCharacterResponse GetTibiaCharacter(int tibiaCharacterId)
         {
-            var tibiaCharacter = _context.TibiaCharacter.Find(tibiaCharacterId);
+            var tibiaCharacter = _context.TibiaCharacter
+                .Where(tibiaCharacter => tibiaCharacter.TibiaCharacterId == tibiaCharacterId)
+                .Select(tibiaCharacter => new TibiaCharacterDTO
+                {
+                    TibiaCharacterId = tibiaCharacter.TibiaCharacterId,
+                    Name = tibiaCharacter.Name,
+                    Level = tibiaCharacter.Level,
+                    Vocation = tibiaCharacter.Vocation,
+                    PVPType = tibiaCharacter.PVPType,
+                    World = tibiaCharacter.World
+                })
+                .FirstOrDefault();
 
             if(tibiaCharacter == null)
             {

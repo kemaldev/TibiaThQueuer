@@ -1,9 +1,11 @@
 ﻿using Data;
 using Models;
+using Models.DTOs;
 using Models.Responses;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -81,7 +83,16 @@ namespace Services.Repositories
 
         public GetAccountResponse GetAccount(int accountId)
         {
-            var account = _context.Account.Find(accountId);
+            var account = _context.Account
+                .Where(account => account.AccountId == accountId)
+                .Select(account => new AccountDTO
+                {
+                    AccountId = account.AccountId,
+                    UserName = account.UserName,
+                    Password = account.Password,
+                    Email = account.Email
+                })
+                .FirstOrDefault();
 
             if(account == null)
             {
