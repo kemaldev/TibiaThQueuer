@@ -9,5 +9,6 @@ namespace Models
         public int CharacterListId { get; set; }
         public ICollection<TibiaCharacter> TibiaCharacters { get; set; }
         public Account Account { get; set; }
+        public int AccountId { get; set; }
     }
 }
