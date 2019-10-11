@@ -15,6 +15,10 @@ namespace Data.Configurations
             builder
                 .HasKey(account => account.AccountId);
             builder.Property(account => account.AccountId).IsRequired();
+
+            builder.HasOne(account => account.CharacterList)
+                   .WithOne(characterList => characterList.Account)
+                   .HasForeignKey<CharacterList>(characterList => characterList.AccountId);
         }
     }
 }

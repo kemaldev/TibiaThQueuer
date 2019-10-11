@@ -27,7 +27,7 @@ namespace Data.Migrations
                 {
                     CharacterListId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<int>(nullable: true)
+                    AccountId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,7 +37,7 @@ namespace Data.Migrations
                         column: x => x.AccountId,
                         principalTable: "Account",
                         principalColumn: "AccountId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,7 +67,8 @@ namespace Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CharacterList_AccountId",
                 table: "CharacterList",
-                column: "AccountId");
+                column: "AccountId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_TibiaCharacter_CharacterListId",

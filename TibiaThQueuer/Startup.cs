@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Services.Interfaces;
+using Services.Repositories;
 
 namespace TibiaThQueuer
 {
@@ -33,6 +35,11 @@ namespace TibiaThQueuer
                     sqlServerOptions => sqlServerOptions.MigrationsAssembly(nameof(Data))
                 )
             );
+
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<ICharacterListRepository, CharacterListRepository>();
+            services.AddTransient<ITibiaCharacterRepository, TibiaCharacterRepository>();
+
             services.AddControllers();
         }
 
