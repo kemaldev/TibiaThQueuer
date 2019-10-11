@@ -8,6 +8,7 @@ namespace Models.DTOs
     {
         public int TibiaCharacterId { get; set; }
         public string Name { get; set; }
+        public string Guild { get; set; }
         public string Vocation { get; set; }
         public int Level { get; set; }
         public string World { get; set; }
