@@ -68,6 +68,9 @@ namespace Data.Migrations
                     b.Property<int?>("CharacterListId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Guild")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Level")
                         .HasColumnType("int");
 

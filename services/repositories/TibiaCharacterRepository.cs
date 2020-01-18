@@ -54,6 +54,7 @@ namespace Services.Repositories
                     TibiaCharacterId = tibiaCharacter.TibiaCharacterId,
                     Name = tibiaCharacter.Name,
                     Level = tibiaCharacter.Level,
+                    Guild = tibiaCharacter.Guild,
                     Vocation = tibiaCharacter.Vocation,
                     PVPType = tibiaCharacter.PVPType,
                     World = tibiaCharacter.World
@@ -178,6 +179,11 @@ namespace Services.Repositories
             if (!string.IsNullOrWhiteSpace(requestCharacter.World))
             {
                 existingCharacter.World = requestCharacter.World;
+            }
+
+            if(!string.IsNullOrWhiteSpace(requestCharacter.Guild))
+            {
+                existingCharacter.Guild = requestCharacter.Guild;
             }
         }
     }
