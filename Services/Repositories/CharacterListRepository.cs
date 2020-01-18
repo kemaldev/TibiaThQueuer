@@ -34,6 +34,7 @@ namespace Services.Repositories
                                 TibiaCharacterId = tibiaChar.TibiaCharacterId,
                                 Name = tibiaChar.Name,
                                 Level = tibiaChar.Level,
+                                Guild = tibiaChar.Guild,
                                 PVPType = tibiaChar.PVPType,
                                 Vocation = tibiaChar.Vocation,
                                 World = tibiaChar.World
