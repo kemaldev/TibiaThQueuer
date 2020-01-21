@@ -37,6 +37,7 @@ namespace Services
             // Visiting website in order to get Character information.
             webDriver.Navigate().GoToUrl(url);
             var boxContentElement = webDriver.FindElement(By.ClassName("BoxContent"));
+            webDriver.Dispose();
             string characterInfoText = boxContentElement.Text;
             
             string[] characterTable = characterInfoText.Split(
