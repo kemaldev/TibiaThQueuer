@@ -1,16 +1,11 @@
 ﻿using Common.Helpers;
 using Common.Extensions;
-using HtmlAgilityPack;
 using Models;
 using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using System.IO;
 using System.Linq;
+using Functional.Option;
 
 namespace Services
 {
@@ -23,87 +18,102 @@ namespace Services
             webDriver = WebDriverHelper.SetupWebDriver();
         }
 
-        public TibiaCharacter GetTibiaCharacter(string charName)
+        public Option<TibiaCharacter> GetTibiaCharacter(string charName)
         {
-            string url = UrlHelper.FormatTibiaCharacterUrl(charName);
-
-            TibiaCharacter tibiaCharacter = GetTibiaCharacterFromWeb(url, charName);
+            var tibiaCharacter = GetTibiaCharacterFromWeb(charName);
 
             return tibiaCharacter;
         }
 
-        private TibiaCharacter GetTibiaCharacterFromWeb(string url, string charName)
+        private Option<TibiaCharacter> GetTibiaCharacterFromWeb(string charName)
         {
-            // Visiting website in order to get Character information.
-            webDriver.Navigate().GoToUrl(url);
-            var boxContentElement = webDriver.FindElement(By.ClassName("BoxContent"));
-            webDriver.Dispose();
-            string characterInfoText = boxContentElement.Text;
+            var charTable = GetCharacterTableFromTibiaWebsite(charName);
             
+            var tibiaCharacter = charTable.HasValue
+                ? MapCharacterTableToTibiaCharacter(charTable.Value)
+                : Option.None;
+
+            return tibiaCharacter;
+        }
+
+        private Option<TibiaCharacter> MapCharacterTableToTibiaCharacter(string[] characterTable)
+        {
+            var characterProperties = ParseTableToTibiaCharacterProperties(characterTable);
+            var tibiaCharacter = MapCharacterPropertiesToTibiaCharacter(characterProperties);
+
+            return tibiaCharacter;
+        }
+
+        private Option<string[]> GetCharacterTableFromTibiaWebsite(string charName)
+        {
+            string characterInfoText = GetTableContentFromTibiaWebsite(charName);
+
             string[] characterTable = characterInfoText.Split(
                 new[] { Environment.NewLine },
                 StringSplitOptions.None);
 
             //If we can't find the tibia character we search for we want to end the call.
-            if(characterTable.Any(row => row.Contains("Could not find character")))
+            if (characterTable.Any(row => row.Contains("Could not find character")))
             {
-                return null;
+                return Option.None;
             }
 
-            // Parsing text into easily workable data structure.
-            var characterInfo = characterTable
-                .Where(line => line.Contains(':'))
-                .Select(line => line.Split(':')
-                    .Select(lineValue => lineValue.Trim())
-                );
-
-            //Mapping information gotten from website to TibiaCharacter object.
-            TibiaCharacter tibiaCharacter = MapCharacterInfoToTibiaCharacter(characterInfo,charName);
-
-            return tibiaCharacter;
+            return Option.Some(characterTable);
         }
 
-        private TibiaCharacter MapCharacterInfoToTibiaCharacter(IEnumerable<IEnumerable<string>> characterInfo, string characterName)
+        private string GetTableContentFromTibiaWebsite(string charName)
         {
-            TibiaCharacter tibiaCharacter = new TibiaCharacter();
-            tibiaCharacter.Name = characterName;
+            string url = UrlHelper.FormatTibiaCharacterUrl(charName);
+            webDriver.Navigate().GoToUrl(url);
+            var boxContentElement = webDriver.FindElement(By.ClassName("BoxContent"));
+            webDriver.Dispose();
+            string characterInfoText = boxContentElement.Text;
 
-            foreach (var row in characterInfo)
-            {
-                string title = row.ElementAt(0);
-                string value = row.ElementAt(1);
+            return characterInfoText;
+        }
 
-                switch (title)
+        private IEnumerable<KeyValuePair<string, string>> ParseTableToTibiaCharacterProperties(string[] characterTable)
+        {
+            var characterProperties = characterTable
+                .Where(tableRow => tableRow.Contains(':'))
+                .Select(tableRow =>
                 {
-                    case "Vocation":
-                        Ensure.NotNullOrWhiteSpace(value);
+                    return FormatTableRowToTibiaCharProperty(tableRow);
+                });
 
-                        string[] promotedVocation = value.Split(' ');
-                        if (promotedVocation.Length == 2)
-                        {
-                            tibiaCharacter.Vocation = promotedVocation[1];
-                        }
-                        else
-                        {
-                            tibiaCharacter.Vocation = value;
-                        }
-                        break;
-                    case "Level":
-                        Ensure.NotNullOrWhiteSpace(value);
-                        tibiaCharacter.Level = Int32.Parse(value);
-                        break;
-                    case "World":
-                        Ensure.NotNullOrWhiteSpace(value);
-                        tibiaCharacter.World = value;
-                        break;
-                    case "Guild Membership":
-                        Ensure.NotNullOrWhiteSpace(value);
-                        tibiaCharacter.Guild = value;
-                        break;
-                }
+            return characterProperties;
+        }
+
+        private KeyValuePair<string, string> FormatTableRowToTibiaCharProperty(string tableRow)
+        {
+            var tibiaCharProperty = tableRow.Split(':')
+                .Select(lineValue => lineValue.Trim());
+            
+            var propertyTitle = tibiaCharProperty.ElementAt(0);
+            var propertyValue = tibiaCharProperty.ElementAt(1);
+
+            return new KeyValuePair<string, string>(propertyTitle, propertyValue);
+        }
+
+        private Option<TibiaCharacter> MapCharacterPropertiesToTibiaCharacter(IEnumerable<KeyValuePair<string, string>> characterProperties)
+        {
+            try
+            {
+                var tibiaCharacter = new TibiaCharacter(
+                    name: characterProperties.First(property => property.Key == "Name").Value,
+                    vocation: characterProperties.First(property => property.Key == "Vocation").Value,
+                    guild: characterProperties.First(property => property.Key == "Guild Membership").Value,
+                    level: int.Parse(characterProperties.First(property => property.Key == "Level").Value),
+                    world: characterProperties.First(property => property.Key == "World").Value
+                );
+
+                return tibiaCharacter;
             }
-
-            return tibiaCharacter;
+            catch (Exception ex)
+            {
+                //Log ex
+                return Option.None;
+            }
         }
     }
 }

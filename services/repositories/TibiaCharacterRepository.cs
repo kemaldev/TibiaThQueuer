@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using Common.Helpers;
+using Data;
 using Models;
 using Models.DTOs;
 using Models.Responses;
@@ -113,14 +114,14 @@ namespace Services.Repositories
             };
         }
 
-        public async Task<ResponseBase> UpdateTibiaCharacterAsync(int tibiaCharacterId, TibiaCharacter tibiaCharacter)
+        public async Task<ResponseBase> UpdateTibiaCharacterAsync(int tibiaCharacterId, TibiaCharacter requestedTibiaCharacter)
         {
-            if(tibiaCharacter == null)
+            if(requestedTibiaCharacter == null)
             {
                 return new ResponseBase
                 {
                     Success = false,
-                    ErrorMessage = nameof(tibiaCharacter) + " update request object was null."
+                    ErrorMessage = nameof(requestedTibiaCharacter) + " update request object was null."
                 };
             }
 
@@ -135,7 +136,7 @@ namespace Services.Repositories
                 };
             }
 
-            MapUpdateRequest(existingCharacter: existingTibiaCharacter, requestCharacter: tibiaCharacter);
+            MapUpdateRequest(existingTibiaCharacter, requestedTibiaCharacter);
             _context.TibiaCharacter.Update(existingTibiaCharacter);
 
             try
