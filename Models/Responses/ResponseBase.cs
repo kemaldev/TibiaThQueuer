@@ -8,5 +8,25 @@ namespace Models.Responses
     {
         public bool Success { get; set; }
         public string ErrorMessage { get; set; }
+
+
+        public bool Failed => !Success; 
+        
+        public static ResponseBase ReturnSuccess()
+        {
+            return new ResponseBase
+            {
+                Success = true
+            };
+        }
+
+        public static ResponseBase ReturnFailed(string errorMessage)
+        {
+            return new ResponseBase
+            {
+                Success = false,
+                ErrorMessage = errorMessage
+            };
+        }
     }
 }
