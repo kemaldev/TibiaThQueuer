@@ -9,15 +9,13 @@ namespace Models.DTOs.Mappers
         public static TibiaCharacterDTO MapTibiaCharacterToTibiaCharacterDTO(TibiaCharacter tibiaCharacter)
         {
             var tibiaCharacterDTO = new TibiaCharacterDTO
-            {
-                TibiaCharacterId = tibiaCharacter.TibiaCharacterId,
-                Name = tibiaCharacter.Name,
-                Level = tibiaCharacter.Level,
-                Guild = tibiaCharacter.Guild,
-                PVPType = tibiaCharacter.PVPType,
-                Vocation = tibiaCharacter.Vocation,
-                World = tibiaCharacter.World
-            };
+            (
+                name: tibiaCharacter.Name,
+                vocation: tibiaCharacter.Vocation,
+                guild: tibiaCharacter.Guild,
+                level: tibiaCharacter.Level,
+                world: tibiaCharacter.World
+            );
 
             return tibiaCharacterDTO;
         }

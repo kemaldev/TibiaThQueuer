@@ -14,14 +14,5 @@ namespace Models
         public string World { get; set; }
         public string PVPType { get; set; }
         public CharacterList CharacterList { get; set; }
-
-        public TibiaCharacter(string name, string vocation, string guild, int level, string world)
-        {
-            Name = name;
-            Vocation = vocation;
-            Guild = guild;
-            Level = level;
-            World = world;
-        }
     }
 }

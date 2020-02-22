@@ -1,8 +1,11 @@
 ﻿using Common.Helpers;
 using Data;
+using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.DTOs;
+using Models.DTOs.Mappers;
 using Models.Responses;
+using Models.Responses.Mappers;
 using Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -24,58 +27,22 @@ namespace Services.Repositories
         public async Task<ResponseBase> AddTibiaCharacterAsync(TibiaCharacter tibiaCharacter)
         {
             _context.TibiaCharacter.Add(tibiaCharacter);
-            
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                //log exception.
 
-                return new ResponseBase
-                {
-                    Success = false,
-                    ErrorMessage = "Failed to add tibia character."
-                };
-            }
+            var response = await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Failed to add tibia character.", _context);
 
-            return new ResponseBase
-            {
-                Success = true
-            };
+            return response;
         }
 
         public TibiaCharacterResponse GetTibiaCharacter(int tibiaCharacterId)
         {
-            var tibiaCharacter = _context.TibiaCharacter
-                .Where(tibiaCharacter => tibiaCharacter.TibiaCharacterId == tibiaCharacterId)
-                .Select(tibiaCharacter => new TibiaCharacterDTO
-                {
-                    TibiaCharacterId = tibiaCharacter.TibiaCharacterId,
-                    Name = tibiaCharacter.Name,
-                    Level = tibiaCharacter.Level,
-                    Guild = tibiaCharacter.Guild,
-                    Vocation = tibiaCharacter.Vocation,
-                    PVPType = tibiaCharacter.PVPType,
-                    World = tibiaCharacter.World
-                })
-                .FirstOrDefault();
+            var tibiaCharacter = GetTibiaCharacterFromDb(tibiaCharacterId);
 
             if(tibiaCharacter == null)
             {
-                return new TibiaCharacterResponse
-                {
-                    ErrorMessage = "Tibia character could not be found",
-                    Success = false
-                };
+                return (TibiaCharacterResponse) ResponseBase.ReturnFailed("Tibia character could not be found");
             }
 
-            return new TibiaCharacterResponse
-            {
-                Success = true,
-                tibiaCharacter = tibiaCharacter
-            };
+            return TibiaCharacterResponse.SuccessfulResponse(tibiaCharacter);
         }
 
         public async Task<ResponseBase> DeleteTibiaCharacterAsync(int tibiaCharacterId)
@@ -84,83 +51,42 @@ namespace Services.Repositories
 
             if(tibiaCharacter == null)
             {
-                return new ResponseBase
-                {
-                    Success = false,
-                    ErrorMessage = "Character cannot be deleted because it does not exist."
-                };
+                return ResponseBase.ReturnFailed("Character cannot be deleted because it does not exist.");
             }
 
             _context.TibiaCharacter.Remove(tibiaCharacter);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                //log exception
+            var response = await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Character deletion failed.", _context);
 
-                return new ResponseBase
-                {
-                    Success = false,
-                    ErrorMessage = "Character deletion failed."
-                };
-            }
-
-            return new ResponseBase
-            {
-                Success = true
-            };
+            return response;
         }
 
         public async Task<ResponseBase> UpdateTibiaCharacterAsync(int tibiaCharacterId, TibiaCharacter requestedTibiaCharacter)
         {
             if(requestedTibiaCharacter == null)
             {
-                return new ResponseBase
-                {
-                    Success = false,
-                    ErrorMessage = nameof(requestedTibiaCharacter) + " update request object was null."
-                };
+                return ResponseBase.ReturnFailed($"{ nameof(requestedTibiaCharacter) } update request object was null.");
             }
 
             var existingTibiaCharacter = _context.TibiaCharacter.Find(tibiaCharacterId);
 
             if (existingTibiaCharacter == null)
             {
-                return new ResponseBase
-                {
-                    Success = false,
-                    ErrorMessage = "Character cannot be updated because it does not exist."
-                };
+                return ResponseBase.ReturnFailed("Character cannot be updated because it does not exist.");
             }
 
-            MapUpdateRequest(existingTibiaCharacter, requestedTibiaCharacter);
+            existingTibiaCharacter = MapUpdateRequest(existingTibiaCharacter, requestedTibiaCharacter);
             _context.TibiaCharacter.Update(existingTibiaCharacter);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch(Exception ex)
-            {
-                //log exception
+            var response = await ResponseBaseMapper
+                .MapErrorResponseUponDBFailElseSuccess(
+                $"Error ocurred when trying to update tibia character with id: {existingTibiaCharacter.TibiaCharacterId}", 
+                _context);
 
-                return new ResponseBase
-                {
-                    Success = false,
-                    ErrorMessage = "Error ocurred when trying to update tibia character with id: " + existingTibiaCharacter.TibiaCharacterId
-                };
-            }
-
-            return new ResponseBase
-            {
-                Success = true
-            };
+            return response;
         }
 
-        private void MapUpdateRequest(TibiaCharacter existingCharacter, TibiaCharacter requestCharacter)
+        private TibiaCharacter MapUpdateRequest(TibiaCharacter existingCharacter, TibiaCharacter requestCharacter)
         {
             if (!string.IsNullOrWhiteSpace(requestCharacter.Name))
             {
@@ -186,6 +112,18 @@ namespace Services.Repositories
             {
                 existingCharacter.Guild = requestCharacter.Guild;
             }
+
+            return existingCharacter;
+        }
+
+        private TibiaCharacterDTO GetTibiaCharacterFromDb(int tibiaCharacterId)
+        {
+            var tibiaCharacter = _context.TibiaCharacter
+                .Where(tibiaCharacter => tibiaCharacter.TibiaCharacterId == tibiaCharacterId)
+                .Select(tibiaCharacter => TibiaCharacterDTOMapper.MapTibiaCharacterToTibiaCharacterDTO(tibiaCharacter))
+                .FirstOrDefault();
+
+            return tibiaCharacter;
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Services.Repositories
             _context.CharacterList.Add(characterList);
 
             var dbSaveResponse = 
-                await MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to create character list.");
+                await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to create character list.", _context);
 
             return dbSaveResponse;
         }
@@ -84,7 +84,7 @@ namespace Services.Repositories
             characterList.TibiaCharacters.Add(tibiaCharacter);
 
             var dbResponse = 
-                await MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to add character to list.");
+                await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to add character to list.", _context);
             return dbResponse;
         }
 
@@ -104,7 +104,8 @@ namespace Services.Repositories
 
 
             var removeCharacterFromDBResponse = 
-                await MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to clear related data to character list.");
+                await ResponseBaseMapper
+                    .MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to clear related data to character list.", _context);
 
             if (removeCharacterFromDBResponse.Failed)
             {
@@ -114,7 +115,7 @@ namespace Services.Repositories
             _context.CharacterList.Remove(characterList);
 
             var removeCharacterListFromDBResponse =
-                await MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to delete character list.");
+                await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to delete character list.", _context);
 
             return removeCharacterFromDBResponse;
         }
@@ -138,23 +139,9 @@ namespace Services.Repositories
             characterList.TibiaCharacters.Remove(tibiaCharacter);
 
             var dbResponse =
-                await MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to delete character from list.");
+                await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to delete character from list.", _context);
 
             return dbResponse;
-        }
-        private async Task<ResponseBase> MapErrorResponseUponDBFailElseSuccess(string errorMessage)
-        {
-            try
-            {
-                await _context.SaveChangesAsync();
-                return ResponseBase.ReturnSuccess();
-            }
-            catch (DbUpdateException ex)
-            {
-                //log exception
-
-                return ResponseBase.ReturnFailed(errorMessage);
-            }
         }
     }
 }

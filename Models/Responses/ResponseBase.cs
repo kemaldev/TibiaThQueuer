@@ -11,14 +11,6 @@ namespace Models.Responses
 
 
         public bool Failed => !Success; 
-        
-        public static ResponseBase ReturnSuccess()
-        {
-            return new ResponseBase
-            {
-                Success = true
-            };
-        }
 
         public static ResponseBase ReturnFailed(string errorMessage)
         {

@@ -6,12 +6,20 @@ namespace Models.DTOs
 {
     public class TibiaCharacterDTO
     {
-        public int TibiaCharacterId { get; set; }
-        public string Name { get; set; }
-        public string Guild { get; set; }
-        public string Vocation { get; set; }
-        public int Level { get; set; }
-        public string World { get; set; }
-        public string PVPType { get; set; }
+        public string Name { get; }
+        public string Guild { get; }
+        public string Vocation { get; }
+        public int Level { get; }
+        public string World { get; }
+
+
+        public TibiaCharacterDTO(string name, string vocation, string guild, int level, string world)
+        {
+            Name = name;
+            Vocation = vocation;
+            Guild = guild;
+            Level = level;
+            World = world;
+        }
     }
 }
