@@ -19,7 +19,7 @@ Update-Database
 There are several endpoints that can be called for different sorts of purposes, here is what we have support for at the moment:
 
 #### TibiaCharacter
-```JSON
+```
 GetTibiaCharacter: /api/character/:id [GET]
 
 AddTibiaCharacter: /api/character [POST]
@@ -41,11 +41,10 @@ UpdateTibiaCharacter: /api/character [PUT]
 }
 
 DeleteTibiaCharacter: /api/character/:id [DELETE]
-
 ```
 
 #### CharacterList
-```JSON
+```
 GetCharacterList: /api/characterlist/:id [GET]
 
 CreateCharacterList: /api/characterlist [POST] => passes in accountId as body
@@ -62,9 +61,6 @@ AddTibiaCharacterToList: /api/characterlist/:characterListId/character [POST]
 RemoveCharacterList: /api/characterlist/:id [DELETE]
 
 RemoveTibiaCharacterFromList: /api/characterlist/:characterListId/character [DELETE] => passes in characterId as body
-
-
-
 ```
 
 
