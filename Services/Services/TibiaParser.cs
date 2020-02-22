@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using OpenQA.Selenium;
 using System.Linq;
 using Functional.Option;
+using Models.DTOs;
 
 namespace Services
 {
@@ -18,14 +19,14 @@ namespace Services
             webDriver = WebDriverHelper.SetupWebDriver();
         }
 
-        public Option<TibiaCharacter> GetTibiaCharacter(string charName)
+        public Option<TibiaCharacterDTO> GetTibiaCharacter(string charName)
         {
             var tibiaCharacter = GetTibiaCharacterFromWeb(charName);
 
             return tibiaCharacter;
         }
 
-        private Option<TibiaCharacter> GetTibiaCharacterFromWeb(string charName)
+        private Option<TibiaCharacterDTO> GetTibiaCharacterFromWeb(string charName)
         {
             var charTable = GetCharacterTableFromTibiaWebsite(charName);
             
@@ -36,7 +37,7 @@ namespace Services
             return tibiaCharacter;
         }
 
-        private Option<TibiaCharacter> MapCharacterTableToTibiaCharacter(string[] characterTable)
+        private Option<TibiaCharacterDTO> MapCharacterTableToTibiaCharacter(string[] characterTable)
         {
             var characterProperties = ParseTableToTibiaCharacterProperties(characterTable);
             var tibiaCharacter = MapCharacterPropertiesToTibiaCharacter(characterProperties);
@@ -95,11 +96,11 @@ namespace Services
             return new KeyValuePair<string, string>(propertyTitle, propertyValue);
         }
 
-        private Option<TibiaCharacter> MapCharacterPropertiesToTibiaCharacter(IEnumerable<KeyValuePair<string, string>> characterProperties)
+        private Option<TibiaCharacterDTO> MapCharacterPropertiesToTibiaCharacter(IEnumerable<KeyValuePair<string, string>> characterProperties)
         {
             try
             {
-                var tibiaCharacter = new TibiaCharacter(
+                var tibiaCharacter = new TibiaCharacterDTO(
                     name: characterProperties.First(property => property.Key == "Name").Value,
                     vocation: characterProperties.First(property => property.Key == "Vocation").Value,
                     guild: characterProperties.First(property => property.Key == "Guild Membership").Value,
