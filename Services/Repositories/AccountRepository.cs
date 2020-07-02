@@ -87,10 +87,7 @@ namespace Services.Repositories
                 .Where(account => account.AccountId == accountId)
                 .Select(account => new AccountDTO
                 {
-                    AccountId = account.AccountId,
-                    UserName = account.UserName,
-                    Password = account.Password,
-                    Email = account.Email
+                    AccountId = account.AccountId
                 })
                 .FirstOrDefault();
 
@@ -108,11 +105,6 @@ namespace Services.Repositories
                 Success = true,
                 Account = account
             };
-        }
-
-        public ResponseBase Login(string userName, string passPhrase)
-        {
-            throw new NotImplementedException(); //Need to research how to implement this in the best way.
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Services.Repositories
             _context.CharacterList.Add(characterList);
 
             var dbSaveResponse = 
-                await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to create character list.", _context);
+                await ResponseBaseMapper.SaveDbChangesAndMapResponse("Error ocurred when trying to create character list.", _context);
 
             return dbSaveResponse;
         }
@@ -76,15 +76,19 @@ namespace Services.Repositories
                 return ResponseBase.ReturnFailed("Specified character list did not exist.");
             }
 
-            if(characterList.TibiaCharacters == null)
+            if(characterList.CharacterListRelations == null)
             {
-                characterList.TibiaCharacters = new List<TibiaCharacter>();
+                characterList.CharacterListRelations = new List<CharacterListRelation>();
             }
 
-            characterList.TibiaCharacters.Add(tibiaCharacter);
+            characterList.CharacterListRelations.Add(new CharacterListRelation
+            {
+                TibiaCharacter = tibiaCharacter,
+                CharacterList = characterList
+            });
 
             var dbResponse = 
-                await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to add character to list.", _context);
+                await ResponseBaseMapper.SaveDbChangesAndMapResponse("Error ocurred when trying to add character to list.", _context);
             return dbResponse;
         }
 
@@ -99,25 +103,27 @@ namespace Services.Repositories
                 return ResponseBase.ReturnFailed("Character list with specified id does not exist.");
             }
             
-            characterList.TibiaCharacters.Select(tibiaChar => _context.TibiaCharacter.Remove(tibiaChar));
+            characterList.CharacterListRelations
+                .Where(relation => relation.CharacterListId == characterListId)
+                .Select(relation => _context.CharacterListRelation.Remove(relation));
+
             characterList.Account.CharacterList = null;
 
-
-            var removeCharacterFromDBResponse = 
+            var removeCharacterRelationsFromDBResponse = 
                 await ResponseBaseMapper
-                    .MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to clear related data to character list.", _context);
+                    .SaveDbChangesAndMapResponse("Error ocurred when trying to clear related data to character list.", _context);
 
-            if (removeCharacterFromDBResponse.Failed)
+            if (removeCharacterRelationsFromDBResponse.Failed)
             {
-                return removeCharacterFromDBResponse;
+                return removeCharacterRelationsFromDBResponse;
             }
 
             _context.CharacterList.Remove(characterList);
 
             var removeCharacterListFromDBResponse =
-                await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to delete character list.", _context);
+                await ResponseBaseMapper.SaveDbChangesAndMapResponse("Error ocurred when trying to delete character list.", _context);
 
-            return removeCharacterFromDBResponse;
+            return removeCharacterRelationsFromDBResponse;
         }
 
         public async Task<ResponseBase> RemoveTibiaCharacterFromListAsync(int tibiaCharacterId, int characterListId)
@@ -136,10 +142,12 @@ namespace Services.Repositories
                 return ResponseBase.ReturnFailed("Character list with specified id does not exist.");
             }
 
-            characterList.TibiaCharacters.Remove(tibiaCharacter);
+            characterList.CharacterListRelations
+                .Where(relation => relation.CharacterListId == characterListId && relation.TibiaCharacterId == tibiaCharacterId)
+                .Select(relation => _context.CharacterListRelation.Remove(relation));
 
             var dbResponse =
-                await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Error ocurred when trying to delete character from list.", _context);
+                await ResponseBaseMapper.SaveDbChangesAndMapResponse("Error ocurred when trying to delete character from list.", _context);
 
             return dbResponse;
         }

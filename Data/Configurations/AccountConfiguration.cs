@@ -12,13 +12,11 @@ namespace Data.Configurations
         public void Configure(EntityTypeBuilder<Account> builder)
         {
             builder.ToTable(nameof(Account));
+
             builder
                 .HasKey(account => account.AccountId);
-            builder.Property(account => account.AccountId).IsRequired();
 
-            builder.HasOne(account => account.CharacterList)
-                   .WithOne(characterList => characterList.Account)
-                   .HasForeignKey<CharacterList>(characterList => characterList.AccountId);
+            builder.Property(account => account.AccountId).IsRequired();
         }
     }
 }

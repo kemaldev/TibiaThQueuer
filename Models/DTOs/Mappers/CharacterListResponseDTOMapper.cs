@@ -12,8 +12,8 @@ namespace Models.DTOs.Mappers
         {
             var characterListResponseDTO = new CharacterListResponseDTO
             {
-                TibiaCharacters = characterList.TibiaCharacters
-                .Select(tibiaChar => TibiaCharacterDTOMapper.MapTibiaCharacterToTibiaCharacterDTO(tibiaChar))
+                TibiaCharacters = characterList.CharacterListRelations
+                .Select(characterRelation => TibiaCharacterDTOMapper.MapTibiaCharacterToTibiaCharacterDTO(characterRelation.TibiaCharacter))
                 .ToList(),
 
                 Account = AccountDTOMapper.MapAccountToAccountDTO(characterList.Account)

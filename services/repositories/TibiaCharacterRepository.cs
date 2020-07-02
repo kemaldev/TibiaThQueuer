@@ -28,7 +28,7 @@ namespace Services.Repositories
         {
             _context.TibiaCharacter.Add(tibiaCharacter);
 
-            var response = await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Failed to add tibia character.", _context);
+            var response = await ResponseBaseMapper.SaveDbChangesAndMapResponse("Failed to add tibia character.", _context);
 
             return response;
         }
@@ -54,9 +54,22 @@ namespace Services.Repositories
                 return ResponseBase.ReturnFailed("Character cannot be deleted because it does not exist.");
             }
 
+            tibiaCharacter.CharacterListRelations
+                .Where(relation => relation.TibiaCharacterId == tibiaCharacterId)
+                .Select(relation => _context.CharacterListRelation.Remove(relation));
+
+            var removeCharacterRelationsFromDBResponse =
+                await ResponseBaseMapper
+                    .SaveDbChangesAndMapResponse("Error ocurred when trying to clear related data to character list.", _context);
+
+            if (removeCharacterRelationsFromDBResponse.Failed)
+            {
+                return removeCharacterRelationsFromDBResponse;
+            }
+
             _context.TibiaCharacter.Remove(tibiaCharacter);
 
-            var response = await ResponseBaseMapper.MapErrorResponseUponDBFailElseSuccess("Character deletion failed.", _context);
+            var response = await ResponseBaseMapper.SaveDbChangesAndMapResponse("Character deletion failed.", _context);
 
             return response;
         }
@@ -79,7 +92,7 @@ namespace Services.Repositories
             _context.TibiaCharacter.Update(existingTibiaCharacter);
 
             var response = await ResponseBaseMapper
-                .MapErrorResponseUponDBFailElseSuccess(
+                .SaveDbChangesAndMapResponse(
                 $"Error ocurred when trying to update tibia character with id: {existingTibiaCharacter.TibiaCharacterId}", 
                 _context);
 

@@ -11,6 +11,7 @@ namespace Data
         public DbSet<Account> Account { get; set; }
         public DbSet<TibiaCharacter> TibiaCharacter { get; set; }
         public DbSet<CharacterList> CharacterList { get; set; }
+        public DbSet<CharacterListRelation> CharacterListRelation { get; set; }
 
         public TibiaThContext(DbContextOptions<TibiaThContext> options) : base(options) { }
 

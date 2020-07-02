@@ -12,13 +12,15 @@ namespace Data.Configurations
         public void Configure(EntityTypeBuilder<CharacterList> builder)
         {
             builder.ToTable(nameof(CharacterList));
+            
             builder
                 .HasKey(characterList => characterList.CharacterListId);
+            
             builder.Property(characterList => characterList.CharacterListId).IsRequired();
 
-            builder
-                .HasMany(characterList => characterList.TibiaCharacters)
-                .WithOne(tibiaCharacter => tibiaCharacter.CharacterList);
+            builder.HasOne(characterList => characterList.Account)
+                   .WithOne(account => account.CharacterList)
+                   .HasForeignKey<Account>(account => account.CharacterListId);
         }
     }
 }
