@@ -8,7 +8,7 @@ namespace Models.Responses.Mappers
 {
     public static class ResponseBaseMapper
     {
-        public static async Task<ResponseBase> MapErrorResponseUponDBFailElseSuccess(string errorMessage, DbContext context)
+        public static async Task<ResponseBase> SaveDbChangesAndMapResponse(string errorMessage, DbContext context)
         {
             try
             {

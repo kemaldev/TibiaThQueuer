@@ -12,6 +12,5 @@ namespace Services.Interfaces
         Task<ResponseBase> CreateAccountAsync(Account account);
         GetAccountResponse GetAccount(int accountId);
         Task<ResponseBase> DeleteAccountAsync(int accountId);
-        ResponseBase Login(string userName, string passPhrase);
     }
 }

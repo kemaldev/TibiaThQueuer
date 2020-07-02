@@ -10,10 +10,7 @@ namespace Models.DTOs.Mappers
         {
             var accountDTO = new AccountDTO
             {
-                AccountId = account.AccountId,
-                Email = account.Email,
-                Password = account.Password,
-                UserName = account.UserName
+                AccountId = account.AccountId
             };
 
             return accountDTO;
