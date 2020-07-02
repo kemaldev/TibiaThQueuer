@@ -13,6 +13,6 @@ namespace Models
         public int Level { get; set; }
         public string World { get; set; }
         public string PVPType { get; set; }
-        public CharacterList CharacterList { get; set; }
+        public ICollection<CharacterListRelation> CharacterListRelations { get; set; }
     }
 }

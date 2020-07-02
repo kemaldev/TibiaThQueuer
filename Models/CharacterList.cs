@@ -7,8 +7,7 @@ namespace Models
     public class CharacterList
     {
         public int CharacterListId { get; set; }
-        public ICollection<TibiaCharacter> TibiaCharacters { get; set; }
+        public ICollection<CharacterListRelation> CharacterListRelations { get; set; }
         public Account Account { get; set; }
-        public int AccountId { get; set; }
     }
 }
