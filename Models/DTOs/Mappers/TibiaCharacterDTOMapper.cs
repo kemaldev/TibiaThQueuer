@@ -19,5 +19,12 @@ namespace Models.DTOs.Mappers
 
             return tibiaCharacterDTO;
         }
+
+        public static TibiaCharacterDTO ToTibiaCharacterDTO(this TibiaCharacterQuery charQuery)
+        {
+            var charData = charQuery.Characters.Data;
+
+            return new TibiaCharacterDTO(charData.Name, charData.Vocation, charData.Guild.Name, charData.Level, charData.World);
+        }
     }
 }
