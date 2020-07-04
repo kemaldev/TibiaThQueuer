@@ -22,6 +22,9 @@ namespace Models.DTOs
         [JsonProperty("name")]
         public string Name { get; set; }
 
+        [JsonProperty("comment")]
+        public string Comment { get; set; }
+
         [JsonProperty("guild")]
         public Guild Guild { get; set; }
 

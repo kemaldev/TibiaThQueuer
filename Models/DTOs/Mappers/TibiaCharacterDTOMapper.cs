@@ -14,7 +14,8 @@ namespace Models.DTOs.Mappers
                 vocation: tibiaCharacter.Vocation,
                 guild: tibiaCharacter.Guild,
                 level: tibiaCharacter.Level,
-                world: tibiaCharacter.World
+                world: tibiaCharacter.World,
+                comment: string.Empty
             );
 
             return tibiaCharacterDTO;
@@ -24,7 +25,13 @@ namespace Models.DTOs.Mappers
         {
             var charData = charQuery.Characters.Data;
 
-            return new TibiaCharacterDTO(charData.Name, charData.Vocation, charData.Guild.Name, charData.Level, charData.World);
+            return new TibiaCharacterDTO(
+                charData.Name, 
+                charData.Vocation, 
+                charData.Guild.Name, 
+                charData.Level, 
+                charData.World, 
+                charData.Comment);
         }
     }
 }
