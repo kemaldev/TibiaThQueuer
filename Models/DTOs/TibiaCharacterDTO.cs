@@ -11,15 +11,16 @@ namespace Models.DTOs
         public string Vocation { get; }
         public int Level { get; }
         public string World { get; }
+        public string Comment { get; set; }
 
-
-        public TibiaCharacterDTO(string name, string vocation, string guild, int level, string world)
+        public TibiaCharacterDTO(string name, string vocation, string guild, int level, string world, string comment)
         {
             Name = name;
             Vocation = vocation;
             Guild = guild;
             Level = level;
             World = world;
+            Comment = comment;
         }
     }
 }
